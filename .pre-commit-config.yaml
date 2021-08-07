@@ -15,6 +15,11 @@ repos:
       hooks:
           - id: prospector
 
+    #    - repo: https://github.com/psf/black
+    #      rev: 19.3b0
+    #      hooks:
+    #          - id: black
+
     - repo: https://github.com/adrienverge/yamllint.git
       rev: v1.21.0  # or higher tag
       hooks:
@@ -45,3 +50,4 @@ repos:
             # file: show only the file path as location
             # never: remove all locations
             args: [--add-location, file]
+            entry: sh -c 'python3 `find . -name "manage.py"` migrate --check'
