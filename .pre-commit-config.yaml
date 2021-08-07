@@ -45,3 +45,4 @@ repos:
             # file: show only the file path as location
             # never: remove all locations
             args: [--add-location, file]
+            entry: sh -c 'python3 `find . -name "manage.py"` migrate --check'
