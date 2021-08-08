@@ -1,11 +1,9 @@
 {
   "rules": {
-    ".read": "now < 1630944000000",  // 2021-9-7
-    ".write": "now < 1630944000000",  // 2021-9-7
-    "Books":
-    {
-      "Best_Sellers":
-      {
+    ".read": "now < 1630944000000", // 2021-9-7
+    ".write": "now < 1630944000000", // 2021-9-7
+    "Books": {
+      "Best_Sellers": {
         ".indexOn": ["Price"]
       }
     }
