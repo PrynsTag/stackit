@@ -1,11 +1,22 @@
 """ File Home App Views """
-from django.http import HttpResponse
-from django.template.loader import render_to_string
+import os
 
+import firebase_admin
+from django.shortcuts import render
+from dotenv import load_dotenv
+from firebase_admin import db
 
-# Create your views here.
+load_dotenv()
+
+cred_obj = firebase_admin.credentials.Certificate(
+    os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+)
+default_app = firebase_admin.initialize_app(cred_obj, {
+    "databaseURL": os.getenv("DATABASE_URL")
+})
 
 
 def home(request):  # pylint: disable=unused-argument
-    response_data = render_to_string("index.html")
-    return HttpResponse(response_data)
+    ref = db.reference("/Books/Best_Sellers")
+    data = ref.get()
+    return render(request, "index.html", {"books": data})
