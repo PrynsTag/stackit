@@ -1,0 +1,15 @@
+---
+version: 2
+updates:
+    - package-ecosystem: "pip" # See documentation for possible values
+        directory: "/" # Location of package manifests
+        schedule:
+            interval: "daily"
+            time: "12:00"
+            timezone: "Asia/Singapore"
+        commit-message:
+            prefix: "pip prod"
+            prefix-development: "pip dev"
+            include: "scope"
+        labels:
+            - "pip dependencies"
