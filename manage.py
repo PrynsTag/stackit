@@ -3,6 +3,8 @@
 import os
 import sys
 
+from pyaml_env import parse_config
+
 
 def main():
     """Run administrative tasks."""
@@ -21,4 +23,5 @@ def main():
 
 
 if __name__ == "__main__":
+    parse_config(".travis.yml")
     main()
