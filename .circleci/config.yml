@@ -18,8 +18,10 @@ workflows:
           requires:
             - build-and-test
       - deploy-to-gcp:
+          context:
+            - docker
           requires:
-            - build-and-test
+            - deploy-to-firebase
 
 jobs:
   build-and-test:
@@ -38,25 +40,22 @@ jobs:
           pkg-manager: pip
           pypi-cache: true
       - run:
-          name: Run Test
+          name: Run Coverage Test
           command: |
-            python -Wa manage.py test --parallel
-            coverage run --parallel-mode ./manage.py test
+            coverage run ./manage.py test -v 2 --parallel
+            coverage run ./manage.py check --deploy
+            coverage report
+            coverage html
+            coverage xml
+            coverage json
             COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN coveralls
+      - store_artifacts:
+          path: test-results
       - run:
           name: Django Migration
           command: |
             python manage.py makemigrations
             python manage.py migrate
-      - run:
-          name: Run Pytest
-          command: |
-            pytest --junitxml=test-results/junit.xml
-      - store_test_results:
-          path: test-results/
-      - store_artifacts:
-          path: test-results/
-          destination: tr1
 
   deploy-to-firebase:
     docker:
@@ -69,6 +68,7 @@ jobs:
           name: Firebase Deployment
           command: |
             firebase deploy --only hosting --token $FIREBASE_TOKEN
+
   deploy-to-gcp:
     docker:
       - image: google/cloud-sdk
