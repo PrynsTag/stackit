@@ -3,14 +3,12 @@
 import os
 import sys
 
-from pyaml_env import parse_config
-
 
 def main():
     """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "stackit.settings")
     try:
-        from django.core.management import (  # pylint: disable=import-outside-toplevel
+        from django.core.management import (
             execute_from_command_line,
         )
     except ImportError as exc:
@@ -23,5 +21,4 @@ def main():
 
 
 if __name__ == "__main__":
-    parse_config(".travis.yml")
     main()
