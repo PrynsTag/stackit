@@ -64,6 +64,7 @@ jobs:
           username: prynstag
           password: $DOCKERHUB_PASSWORD
     steps:
+      - run: ls -la
       - run:
           name: Firebase Deployment
           command: |
