@@ -26,6 +26,7 @@ jobs:
           password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
+      - run: mkdir -p test-results
       - python/install-packages:
           pkg-manager: pip
       - python/install-packages:
