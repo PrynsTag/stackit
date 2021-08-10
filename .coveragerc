@@ -24,7 +24,7 @@ exclude_lines =
 
 [html]
 title = StacKIT Python Test Coverage Report
-directory = test-results/coverage.html
+directory = test-artifacts/coverage.html
 
 [xml]
 output = test-results/coverage.xml
