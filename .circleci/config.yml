@@ -17,6 +17,9 @@ workflows:
             - firebase
           requires:
             - build-and-test
+      - deploy-to-gcp:
+          requires:
+            - build-and-test
 
 jobs:
   build-and-test:
@@ -66,7 +69,7 @@ jobs:
           name: Firebase Deployment
           command: |
             firebase deploy --only hosting --token $FIREBASE_TOKEN
-  deploy:
+  deploy-to-gcp:
     docker:
       - image: google/cloud-sdk
         auth:
