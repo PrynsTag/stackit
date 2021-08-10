@@ -19,7 +19,6 @@ workflows:
             - build-and-test
 
 jobs:
-
   build-and-test:
     docker:
       - image: cimg/python:3.9
@@ -67,3 +66,15 @@ jobs:
           name: Firebase Deployment
           command: |
             firebase deploy --only hosting --token $FIREBASE_TOKEN
+  deploy:
+    docker:
+      - image: google/cloud-sdk
+        auth:
+          username: prynstag
+          password: $DOCKERHUB_PASSWORD
+    steps:
+      - run: |
+          echo $GCLOUD_SERVICE_KEY |
+          gcloud auth activate-service-account --key-file=-
+          gcloud --quiet config set project $GOOGLE_PROJECT_ID
+          gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
