@@ -35,10 +35,6 @@ jobs:
       - run: mkdir -p test-results test-artifacts
       - python/install-packages:
           pkg-manager: pip
-      - python/install-packages:
-          pip-dependency-file: requirements.txt
-          pkg-manager: pip
-          pypi-cache: true
       - run:
           name: Run Coverage Test
           command: |
@@ -66,6 +62,7 @@ jobs:
           username: prynstag
           password: $DOCKERHUB_PASSWORD
     steps:
+      - checkout
       - run:
           name: Firebase Deployment
           command: |
