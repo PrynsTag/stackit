@@ -17,11 +17,17 @@ workflows:
             - firebase
           requires:
             - build-and-test
+          filters:
+            branches:
+              only: master
       - deploy-to-gcp:
           context:
             - docker
           requires:
             - deploy-to-firebase
+          filters:
+            branches:
+              only: master
 
 jobs:
   build-and-test:
@@ -75,8 +81,10 @@ jobs:
           username: prynstag
           password: $DOCKERHUB_PASSWORD
     steps:
-      - run: |
-          echo $GOOGLE_APPLICATION_CREDENTIALS > key_file.json
-          gcloud auth activate-service-account --key-file=key_file.json
-          gcloud --quiet config set project $GOOGLE_PROJECT_ID
-          gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
+      - run:
+          name: Google Auth
+          command: |
+            echo $GOOGLE_APPLICATION_CREDENTIALS > key_file.json
+            gcloud auth activate-service-account --key-file=key_file.json
+            gcloud --quiet config set project $GOOGLE_PROJECT_ID
+            gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
