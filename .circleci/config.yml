@@ -50,11 +50,11 @@ jobs:
           command: |
             coverage run ./manage.py test -v 2 --parallel=1
             coverage run ./manage.py check --deploy
-            mkdir -p test-results/unittest
+            mkdir -p test-results
             coverage report
             coverage html
             coverage json
-            coverage xml -o test-results/unittest/unittest.xml
+            coverage xml -o test-results/unittest.xml
             coveralls
       - store_test_results:
           path: test-results
