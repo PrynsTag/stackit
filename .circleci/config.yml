@@ -53,10 +53,11 @@ jobs:
             mkdir -p test-results
             coverage report
             coverage html -d test-results/coverage.html
-            coverage xml -o test-results/unittest.xml
+            coverage xml -o test-results/unittest/unittest.xml
             coveralls
       - store_test_results:
-          path: test-results
+          path: test-results/unittest
+          destination: test
       - store_artifacts:
           path: test-results
           destination: tr1
