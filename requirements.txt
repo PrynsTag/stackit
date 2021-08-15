@@ -20,7 +20,7 @@ Django==3.2.6
 django-coverage-plugin==2.0.0
 docopt==0.6.2
 filelock==3.0.12
-firebase-admin==5.0.1
+firebase-admin==5.0.2
 gcloud==0.18.3
 google-api-core==1.31.1
 google-api-python-client==2.15.0
