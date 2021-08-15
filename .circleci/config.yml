@@ -38,7 +38,6 @@ jobs:
           password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
-      - run: mkdir -p test-results
       - python/install-packages:
           pkg-manager: pip
       - run:
@@ -51,11 +50,12 @@ jobs:
           command: |
             coverage run ./manage.py test -v 2 --parallel=1
             coverage run ./manage.py check --deploy
+            mkdir -p test-results/unittest
             coverage report
             coverage html
-            coverage xml -o test-results/unittest/unittest.xml
             coverage json
-            COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN coveralls
+            coverage xml -o test-results/unittest/unittest.xml
+            coveralls
       - store_test_results:
           path: test-results
       - store_artifacts:
