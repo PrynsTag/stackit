@@ -38,23 +38,23 @@ jobs:
           password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
-      - run: mkdir -p test-results test-artifacts
+      - run: mkdir -p test-results
       - python/install-packages:
           pkg-manager: pip
       - run:
           name: Run Coverage Test
           command: |
-            coverage run ./manage.py test -v 2 --parallel
+            coverage run ./manage.py test -v 2 --parallel=1
             coverage run ./manage.py check --deploy
             coverage report
             coverage html
-            coverage xml
+            coverage xml -o test-results/unittest/results.xml
             coverage json
             COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN coveralls
       - store_test_results:
           path: test-results
       - store_artifacts:
-          path: test-artifacts
+          path: test-results
       - run:
           name: Django Migration
           command: |
