@@ -48,7 +48,7 @@ jobs:
       - run:
           name: Run Coverage Test
           command: |
-            coverage run ./manage.py test -v 2 --parallel=1
+            coverage run ./manage.py test -v 2 --parallel
             coverage run ./manage.py check --deploy
             mkdir -p test-results
             coverage report
@@ -60,6 +60,7 @@ jobs:
           path: test-results
       - store_artifacts:
           path: test-results
+          destination: tr1
 
   deploy-to-firebase:
     docker:
