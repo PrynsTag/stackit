@@ -52,7 +52,7 @@ jobs:
             coverage run ./manage.py check --deploy
             mkdir -p test-results
             coverage report
-            coverage html -o test-results/coverage.html
+            coverage html -d test-results/coverage.html
             coverage xml -o test-results/unittest.xml
             coveralls
       - store_test_results:
