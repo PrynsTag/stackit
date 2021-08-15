@@ -42,24 +42,24 @@ jobs:
       - python/install-packages:
           pkg-manager: pip
       - run:
+          name: Django Migration
+          command: |
+            python manage.py makemigrations
+            python manage.py migrate
+      - run:
           name: Run Coverage Test
           command: |
             coverage run ./manage.py test -v 2 --parallel=1
             coverage run ./manage.py check --deploy
             coverage report
             coverage html
-            coverage xml -o test-results/unittest/results.xml
+            coverage xml -o test-results/unittest/unittest.xml
             coverage json
             COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN coveralls
       - store_test_results:
           path: test-results
       - store_artifacts:
           path: test-results
-      - run:
-          name: Django Migration
-          command: |
-            python manage.py makemigrations
-            python manage.py migrate
 
   deploy-to-firebase:
     docker:
