@@ -17,9 +17,6 @@ handlers:
     redirect_http_response_code: 301
     script: auto
 
-error_handlers:
-  - error_code: over_quota
-
 automatic_scaling:
   target_cpu_utilization: 0.75
   max_instances: 1
