@@ -23,6 +23,8 @@ workflows:
       - deploy-to-gcp:
           context:
             - docker
+          requires:
+            - build-and-test
 
 jobs:
   build-and-test:
@@ -89,6 +91,22 @@ jobs:
             gcloud auth activate-service-account --key-file=key.json
             gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
             gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+      - run:
+          name: Create Django environment file as a Secret Manager secret
+          command: |
+            echo $GS_BUCKET_NAME >> .env
+            echo $DJANGO_SECRET_KEY >> .env
+      - run:
+          name: Store the secret in Secret Manager
+          command: |
+            gcloud secrets create django_settings --data-file .env
+            rm .env
+      - run:
+          name: Configure access to the secret
+          command: |
+            gcloud secrets add-iam-policy-binding django_settings \
+            --member serviceAccount:$SERVICE_ACCOUNT \
+            --role roles/secretmanager.secretAccessor
       - run:
           name: Deploying to App Engine
           command: gcloud app deploy app.yaml
