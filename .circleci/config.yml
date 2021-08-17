@@ -91,4 +91,4 @@ jobs:
             gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
       - run:
           name: Deploying to App Engine
-          command: gcloud app deploy app.yaml
+          command: gcloud app deploy ./app.yaml
