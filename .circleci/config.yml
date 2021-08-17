@@ -85,12 +85,9 @@ jobs:
       - run:
           name: Set up gcloud config
           command: |
-            echo $GOOGLE_APPLICATION_CREDENTIALS | base64 --decode --ignore-garbage > key.json
-            gcloud auth activate-service-account --key-file=key.json
+            echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -d | gcloud auth activate-service-account --key-file=-
             gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
             gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
       - run:
           name: Deploying to App Engine
-          command: |
-            ls
-            gcloud app deploy /root/project/app.yaml
+          command: gcloud app deploy app.yaml -y
