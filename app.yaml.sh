@@ -1,9 +1,12 @@
----
+#!/bin/bash
+echo """---
 runtime: python39  # or another supported version
 
 env_variables:
-  BUCKET_NAME: "example-gcs-bucket"
-  DJANGO_SETTINGS_MODULE: "stackit.settings"
+  GS_BUCKET_NAME: \"$GS_BUCKET_NAME\"
+  DJANGO_SETTINGS_MODULE: \"stackit.settings\"
+  GOOGLE_PROJECT_ID: \"$GOOGLE_PROJECT_ID\"
+  GOOGLE_COMPUTE_ZONE: \"$GOOGLE_COMPUTE_ZONE\"
 
 handlers:
   # Matches requests to /images/... to files in static/images/...
@@ -23,4 +26,4 @@ automatic_scaling:
   max_pending_latency: automatic
 
 inbound_services:
-  - warmup
+  - warmup"""

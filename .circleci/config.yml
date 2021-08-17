@@ -23,11 +23,6 @@ workflows:
       - deploy-to-gcp:
           context:
             - docker
-          requires:
-            - deploy-to-firebase
-          filters:
-            branches:
-              only: master
 
 jobs:
   build-and-test:
@@ -83,10 +78,17 @@ jobs:
           username: prynstag
           password: $DOCKERHUB_PASSWORD
     steps:
+      - checkout
       - run:
-          name: Google Auth
+          name: Copy across app.yaml config
+          command: ./app.yaml.sh > ./app.yaml
+      - run:
+          name: Set up gcloud config
           command: |
-            echo $GOOGLE_APPLICATION_CREDENTIALS > key_file.json
-            gcloud auth activate-service-account --key-file=key_file.json
-            gcloud --quiet config set project $GOOGLE_PROJECT_ID
-            gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
+            echo $GOOGLE_APPLICATION_CREDENTIALS | base64 --decode > key.json
+            gcloud auth activate-service-account --key-file=key.json
+            gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+            gcloud --quiet config set compute/zone ${$GOOGLE_COMPUTE_ZONE}
+      - run:
+          name: Deploying to App Engine
+          command: gcloud app deploy
