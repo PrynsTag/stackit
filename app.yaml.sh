@@ -13,6 +13,7 @@ env_variables:
   GOOGLE_PROJECT_ID: \"$GOOGLE_PROJECT_ID\"
   GOOGLE_COMPUTE_ZONE: \"$GOOGLE_COMPUTE_ZONE\"
   DJANGO_SECRET_KEY: \"$DJANGO_SECRET_KEY\"
+  APP_ENGINE_ALLOWED_HOST: \"$APP_ENGINE_ALLOWED_HOST\"
 
 automatic_scaling:
   min_idle_instances: automatic
