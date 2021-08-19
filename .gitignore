@@ -139,5 +139,8 @@ cython_debug/
 
 # IDE
 .idea
+
+# User Ignored
 local-process.yml
 process.yml
+.circleci/local-config.yml
