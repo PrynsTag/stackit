@@ -1,17 +1,14 @@
 """ File Home App Views """
-import os
+from django.http import HttpResponse
 
-import firebase_admin
-from django.shortcuts import render
-from dotenv import load_dotenv
-from firebase_admin import db
 
-load_dotenv()
+def index(request):
+    return HttpResponse("This works!")
 
-default_app = firebase_admin.initialize_app()
+
+def hello(request):
+    return HttpResponse("This is Hello!")
 
 
 def home(request):
-    ref = db.reference("/Books/Best_Sellers")
-    data = ref.get()
-    return render(request, "index.html", {"books": data})
+    return HttpResponse("THIS IS HOME")
