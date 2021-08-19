@@ -31,11 +31,3 @@ repos:
       rev: v0.11.0
       hooks:
           - id: markdownlint
-
-    - repo: https://github.com/ecugol/pre-commit-hooks-django
-      rev: v0.3.0
-      hooks:
-          - id: check-untracked-migrations
-          - id: check-unapplied-migrations
-          - id: po-location-format
-            args: ["--add-location", "file"]
