@@ -31,7 +31,7 @@ jobs:
     docker:
       - image: cimg/python:3.9
         auth:
-          username: prynstag
+          username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
     parallelism: 4
     steps:
@@ -64,7 +64,7 @@ jobs:
     docker:
       - image: andreysenov/firebase-tools
         auth:
-          username: prynstag
+          username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
@@ -77,7 +77,7 @@ jobs:
     docker:
       - image: google/cloud-sdk
         auth:
-          username: prynstag
+          username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
