@@ -144,3 +144,4 @@ cython_debug/
 local-process.yml
 process.yml
 .circleci/local-config.yml
+test-results/
