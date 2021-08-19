@@ -10,3 +10,4 @@
 [![DeepSource](https://deepsource.io/gh/PrynsTag/stackit.svg/?label=active+issues&token=CFsOTFsaGar4z89Zgh3CtDtL)](https://deepsource.io/gh/PrynsTag/stackit/?ref=repository-badge)
 [![DeepSource](https://deepsource.io/gh/PrynsTag/stackit.svg/?label=resolved+issues&token=CFsOTFsaGar4z89Zgh3CtDtL)](https://deepsource.io/gh/PrynsTag/stackit/?ref=repository-badge)
 [![Requirements Status](https://requires.io/github/PrynsTag/stackit/requirements.svg?branch=develop)](https://requires.io/github/PrynsTag/stackit/requirements/?branch=develop)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
