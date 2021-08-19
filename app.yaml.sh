@@ -7,10 +7,6 @@ inbound_services:
   - warmup
 entrypoint: gunicorn -b :${PORT:-8080} -w 1 main:app
 
-handlers:
-  - url: /static
-    static_dir: static
-
 env_variables:
   GS_BUCKET_NAME: \"$GS_BUCKET_NAME\"
   DJANGO_SETTINGS_MODULE: \"$DJANGO_SETTINGS_MODULE\"
