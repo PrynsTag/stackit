@@ -1,26 +1,26 @@
 #!/bin/bash
 echo """---
-runtime: python39  # or another supported version
+runtime: python39
+env: standard
+instance_class: F1
+inbound_services:
+  - warmup
+entrypoint: gunicorn -b :$PORT -w 1 main:app
+
+handlers:
+  - url: /static
+    static_dir: static
 
 env_variables:
   GS_BUCKET_NAME: \"$GS_BUCKET_NAME\"
-  DJANGO_SETTINGS_MODULE: \"stackit.settings\"
+  DJANGO_SETTINGS_MODULE: \"$DJANGO_SETTINGS_MODULE\"
   GOOGLE_PROJECT_ID: \"$GOOGLE_PROJECT_ID\"
   GOOGLE_COMPUTE_ZONE: \"$GOOGLE_COMPUTE_ZONE\"
 
-handlers:
-  # Matches requests to /images/... to files in static/images/...
-  - url: /images
-    static_dir: static/images
-  - url: /.*
-    secure: always
-    redirect_http_response_code: 301
-    script: auto
-
 automatic_scaling:
-  target_cpu_utilization: 0.75
-  max_instances: 1
+  min_idle_instances: automatic
+  max_idle_instances: automatic
+  min_pending_latency: automatic
   max_pending_latency: automatic
-
-inbound_services:
-  - warmup"""
+  target_cpu_utilization: 0.75
+  max_instances: 1"""
