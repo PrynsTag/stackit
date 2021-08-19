@@ -5,7 +5,7 @@ env: standard
 instance_class: F1
 inbound_services:
   - warmup
-entrypoint: gunicorn -b :$PORT -w 1 main:app
+entrypoint: gunicorn -b :${PORT:-8080} -w 1 main:app
 
 handlers:
   - url: /static
