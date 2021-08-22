@@ -5,12 +5,16 @@ orbs:
   python: circleci/python@1.4
 
 workflows:
-  sample:
+  deploy:
     jobs:
       - build-and-test:
           context:
             - docker
             - env
+      - approve-prod-deployment:
+          type: approval
+          requires:
+            - build-and-test
       - deploy-to-firebase:
           context:
             - docker
@@ -20,7 +24,7 @@ workflows:
           filters:
             branches:
               only: master
-      - deploy-to-gcp:
+      - deploy-to-prod:
           context:
             - docker
           requires:
@@ -76,7 +80,7 @@ jobs:
           command: |
             firebase deploy --only hosting --token $FIREBASE_TOKEN
 
-  deploy-to-gcp:
+  deploy-to-prod:
     docker:
       - image: google/cloud-sdk
         auth:
