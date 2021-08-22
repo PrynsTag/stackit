@@ -15,6 +15,9 @@ workflows:
           type: approval
           requires:
             - build-and-test
+          filters:
+            branches:
+              only: master
       - deploy-to-prod:
           context:
             - docker
