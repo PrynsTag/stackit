@@ -8,7 +8,13 @@ orbs:
 workflows:
   deploy:
     jobs:
-      - build-and-test:
+      - build:
+          context:
+            - docker
+            - env
+          post-steps:
+            - jira/notify
+      - test:
           context:
             - docker
             - env
@@ -17,7 +23,8 @@ workflows:
       - approve-prod-deployment:
           type: approval
           requires:
-            - build-and-test
+            - build
+            - test
           filters:
             branches:
               only: master
@@ -27,7 +34,8 @@ workflows:
           context:
             - docker
           requires:
-            - build-and-test
+            - build
+            - test
           filters:
             branches:
               only: master
@@ -35,7 +43,7 @@ workflows:
             - jira/notify
 
 jobs:
-  build-and-test:
+  build:
     docker:
       - image: cimg/python:3.9
         auth:
@@ -47,15 +55,28 @@ jobs:
       - python/install-packages:
           pkg-manager: pip
       - run:
-          name: Django Migration
+          name: Run Django Migration
           command: |
             python manage.py makemigrations
             python manage.py migrate
+  test:
+    docker:
+      - image: cimg/python:3.9
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
+    steps:
+      - checkout
+      - python/install-packages:
+          pkg-manager: pip
       - run:
-          name: Run Coverage Test
+          name: Run Django Test
           command: |
             coverage run ./manage.py test -v 2 --parallel
             coverage run ./manage.py check --deploy
+      - run:
+          name: Run Coverage Report
+          command: |
             mkdir -p test-results
             coverage report
             coverage html -d test-results/coverage.html
