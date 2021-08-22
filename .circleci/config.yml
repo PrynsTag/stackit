@@ -15,15 +15,6 @@ workflows:
           type: approval
           requires:
             - build-and-test
-      - deploy-to-firebase:
-          context:
-            - docker
-            - firebase
-          requires:
-            - build-and-test
-          filters:
-            branches:
-              only: master
       - deploy-to-prod:
           context:
             - docker
@@ -66,19 +57,6 @@ jobs:
       - store_artifacts:
           path: test-results
           destination: tr1
-
-  deploy-to-firebase:
-    docker:
-      - image: andreysenov/firebase-tools
-        auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_PASSWORD
-    steps:
-      - checkout
-      - run:
-          name: Firebase Deployment
-          command: |
-            firebase deploy --only hosting --token $FIREBASE_TOKEN
 
   deploy-to-prod:
     docker:
