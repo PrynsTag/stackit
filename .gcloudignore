@@ -18,3 +18,13 @@ __pycache__/
 # Ignored by the build system
 /setup.cfg
 #!include:.gitignore
+README.md
+LICENSE
+.yamllint.yml
+.pre-commit-config.yaml
+.editorconfig
+.deepsource.toml
+.coveralls.yml
+.coveragerc
+.github
+.circleci
