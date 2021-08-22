@@ -47,7 +47,6 @@ jobs:
             coveralls
       - store_test_results:
           path: test-results/unittest
-          destination: test
       - store_artifacts:
           path: test-results
           destination: tr1
