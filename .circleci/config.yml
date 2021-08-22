@@ -104,6 +104,11 @@ workflows:
           requires:
             - build
             - test
+          filters:
+            branches:
+              only:
+                - master
+                - develop
           post-steps:
             - jira/notify
       - approve-prod-deployment:
