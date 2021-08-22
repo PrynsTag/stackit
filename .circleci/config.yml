@@ -3,6 +3,7 @@ version: 2.1
 
 orbs:
   python: circleci/python@1.4
+  jira: circleci/jira@1.3.1
 
 workflows:
   deploy:
@@ -11,6 +12,8 @@ workflows:
           context:
             - docker
             - env
+          post-steps:
+            - jira/notify
       - approve-prod-deployment:
           type: approval
           requires:
@@ -18,6 +21,8 @@ workflows:
           filters:
             branches:
               only: master
+          post-steps:
+            - jira/notify
       - deploy-to-prod:
           context:
             - docker
@@ -26,6 +31,8 @@ workflows:
           filters:
             branches:
               only: master
+          post-steps:
+            - jira/notify
 
 jobs:
   build-and-test:
