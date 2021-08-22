@@ -1,5 +1,6 @@
 """ File Home App Views """
 from django.http import HttpResponse
+from django.shortcuts import render
 
 
 def index(request):
@@ -14,4 +15,5 @@ def hello(request):
 
 def home(request):
     """This is Home"""
-    return HttpResponse("THIS IS HOME")
+    hi = "this is hi"
+    return render(request, "home/home.html", {"text": hi})
