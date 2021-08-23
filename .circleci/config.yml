@@ -24,7 +24,7 @@ jobs:
             python manage.py migrate
       - run:
           name: Collect Static Files
-          command: ./manage.py collectstatic
+          command: ./manage.py collectstatic --no-input
   test:
     docker:
       - image: cimg/python:3.9
