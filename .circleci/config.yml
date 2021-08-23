@@ -6,28 +6,6 @@ orbs:
   jira: circleci/jira@1.3.1
 
 jobs:
-  build:
-    docker:
-      - image: cimg/python:3.9
-        auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_PASSWORD
-    parallelism: 4
-    steps:
-      - checkout
-      - python/install-packages:
-          pkg-manager: pip
-      - run:
-          name: Run Django Migration
-          command: |
-            python manage.py makemigrations
-            python manage.py migrate
-      - run:
-          name: Collect Static Files
-          command: |
-            echo $CLOUD_STORAGE_KEY | base64 -di >> ${HOME}/private_key.json
-            export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/private_key.json
-            ./manage.py collectstatic --no-input
   test:
     docker:
       - image: cimg/python:3.9
@@ -57,6 +35,29 @@ jobs:
       - store_artifacts:
           path: test-results
           destination: tr1
+
+  build:
+    docker:
+      - image: cimg/python:3.9
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
+    parallelism: 4
+    steps:
+      - checkout
+      - python/install-packages:
+          pkg-manager: pip
+      - run:
+          name: Run Django Migration
+          command: |
+            python manage.py makemigrations
+            python manage.py migrate
+      - run:
+          name: Collect Static Files
+          command: |
+            echo $CLOUD_STORAGE_KEY | base64 -di >> ${HOME}/private_key.json
+            export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/private_key.json
+            ./manage.py collectstatic --no-input
 
   deploy-to-staging:
     docker:
@@ -108,8 +109,8 @@ workflows:
           context:
             - docker
           requires:
-            - build
             - test
+            - build
           filters:
             branches:
               only:
