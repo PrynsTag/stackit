@@ -91,12 +91,12 @@ jobs:
 workflows:
   build-test-deploy:
     jobs:
-      - build:
+      - test:
           context:
             - docker
           post-steps:
             - jira/notify
-      - test:
+      - build:
           context:
             - docker
           post-steps:
