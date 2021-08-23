@@ -109,9 +109,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
-STATICFILES_DIRS = [BASE_DIR / "static/"]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "templates")]
+DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+GS_BUCKET_NAME = os.getenv("GS_BUCKET_NAME")
+STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+STATIC_URL = "https://storage.googleapis.com/stackit-2022/static"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -127,6 +131,6 @@ sentry_sdk.init(
     # We recommend adjusting this value in production.
     traces_sample_rate=1.0,
     # If you wish to associate users to errors (assuming you are using
-    # django.contrib.auth) you may enable sending PII data.
+    # django.contrib.auth) you may enable sending PII data.+789
     send_default_pii=True,
 )
