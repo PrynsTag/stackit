@@ -25,8 +25,8 @@ jobs:
       - run:
           name: Collect Static Files
           command: |
-            echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -di >> ${HOME}/private_key.json
-            export $GOOGLE_APPLICATION_CREDENTIALS=${HOME}/private_key.json
+            echo $CLOUD_STORAGE_KEY | base64 -di >> ${HOME}/private_key.json
+            export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/private_key.json
             echo $GOOGLE_APPLICATION_CREDENTIALS
             ./manage.py collectstatic --no-input
   test:
@@ -73,7 +73,7 @@ jobs:
       - run:
           name: Set up gcloud config
           command: |
-            echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -di | gcloud auth activate-service-account --key-file=-
+            echo $GCLOUD_AUTH_KEY | base64 -di | gcloud auth activate-service-account --key-file=-
             gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
             gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
       - run:
