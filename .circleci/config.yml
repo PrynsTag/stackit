@@ -3,33 +3,35 @@ version: 2.1
 
 orbs:
   python: circleci/python@1.4
-
-workflows:
-  sample:
-    jobs:
-      - build-and-test:
-          context:
-            - docker
-            - env
-      - deploy-to-firebase:
-          context:
-            - docker
-            - firebase
-          requires:
-            - build-and-test
-          filters:
-            branches:
-              only: master
-      - deploy-to-gcp:
-          context:
-            - docker
+  jira: circleci/jira@1.3.1
 
 jobs:
-  build-and-test:
+  build:
     docker:
       - image: cimg/python:3.9
         auth:
-          username: prynstag
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
+    steps:
+      - checkout
+      - python/install-packages:
+          pkg-manager: pip
+      - run:
+          name: Run Django Migration
+          command: |
+            python manage.py makemigrations
+            python manage.py migrate
+      - run:
+          name: Collect Static Files
+          command: |
+            echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -di >> ${HOME}/private_key.json
+            export $GOOGLE_APPLICATION_CREDENTIALS=${HOME}/private_key.json
+            ./manage.py collectstatic --no-input
+  test:
+    docker:
+      - image: cimg/python:3.9
+        auth:
+          username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
     parallelism: 4
     steps:
@@ -37,15 +39,13 @@ jobs:
       - python/install-packages:
           pkg-manager: pip
       - run:
-          name: Django Migration
-          command: |
-            python manage.py makemigrations
-            python manage.py migrate
-      - run:
-          name: Run Coverage Test
+          name: Run Django Test
           command: |
             coverage run ./manage.py test -v 2 --parallel
             coverage run ./manage.py check --deploy
+      - run:
+          name: Run Coverage Report
+          command: |
             mkdir -p test-results
             coverage report
             coverage html -d test-results/coverage.html
@@ -53,29 +53,15 @@ jobs:
             coveralls
       - store_test_results:
           path: test-results/unittest
-          destination: test
       - store_artifacts:
           path: test-results
           destination: tr1
 
-  deploy-to-firebase:
-    docker:
-      - image: andreysenov/firebase-tools
-        auth:
-          username: prynstag
-          password: $DOCKERHUB_PASSWORD
-    steps:
-      - checkout
-      - run:
-          name: Firebase Deployment
-          command: |
-            firebase deploy --only hosting --token $FIREBASE_TOKEN
-
-  deploy-to-gcp:
+  deploy-to-staging:
     docker:
       - image: google/cloud-sdk
         auth:
-          username: prynstag
+          username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
@@ -85,10 +71,67 @@ jobs:
       - run:
           name: Set up gcloud config
           command: |
-            echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -di > key.json
-            gcloud auth activate-service-account --key-file=key.json
+            echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -di | gcloud auth activate-service-account --key-file=-
             gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
-            gcloud --quiet config set compute/zone ${$GOOGLE_COMPUTE_ZONE}
+            gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
       - run:
-          name: Deploying to App Engine
-          command: gcloud app deploy
+          name: Deploying to App Engine Staging
+          command: gcloud app deploy --no-promote app.yaml
+
+  deploy-to-prod:
+    docker:
+      - image: google/cloud-sdk
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
+    steps:
+      - checkout
+      - run:
+          name: Deploying to App Engine Production
+          command: gcloud app deploy app.yaml
+
+workflows:
+  build-test-deploy:
+    jobs:
+      - test:
+          context:
+            - docker
+          post-steps:
+            - jira/notify
+      - build:
+          context:
+            - docker
+          post-steps:
+            - jira/notify
+      - deploy-to-staging:
+          context:
+            - docker
+          requires:
+            - build
+            - test
+          filters:
+            branches:
+              only:
+                - master
+                - develop
+          post-steps:
+            - jira/notify
+      - approve-prod-deployment:
+          type: approval
+          filters:
+            branches:
+              only: master
+          requires:
+            - deploy-to-staging
+          post-steps:
+            - jira/notify
+      - deploy-to-prod:
+          context:
+            - docker
+          requires:
+            - approve-prod-deployment
+          filters:
+            branches:
+              only: master
+          post-steps:
+            - jira/notify
