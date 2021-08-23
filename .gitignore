@@ -146,3 +146,4 @@ process.yml
 .circleci/local-config.yml
 test-results/
 /stackit/local-settings.py
+static/admin/*
