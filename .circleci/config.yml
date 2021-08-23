@@ -25,10 +25,10 @@ jobs:
       - run:
           name: Collect Static Files
           command: |
-            echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -di >> ${CIRCLE_WORKING_DIRECTORY}/private_key.json
-            export $GOOGLE_APPLICATION_CREDENTIALS=${CIRCLE_WORKING_DIRECTORY}/private_key.json
+            echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -di >> ${HOME}/private_key.json
+            export $GOOGLE_APPLICATION_CREDENTIALS=${HOME}/private_key.json
             ./manage.py collectstatic --no-input
-            rm -f ${CIRCLE_WORKING_DIRECTORY}/private_key.json
+            rm -f ${HOME}/private_key.json
   test:
     docker:
       - image: cimg/python:3.9
