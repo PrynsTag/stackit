@@ -9,18 +9,38 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import io
 import os
 from pathlib import Path
 
 import sentry_sdk
 from dotenv import load_dotenv
+from google.cloud import secretmanager
 from google.oauth2 import service_account
 from sentry_sdk.integrations.django import DjangoIntegration
 
-load_dotenv()
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+env_file = os.path.join(BASE_DIR, ".env")
+
+if os.path.isfile(env_file):
+    # Use a local secret file, if provided
+
+    load_dotenv(env_file)
+# ...
+elif os.environ.get("GOOGLE_PROJECT_ID", None):
+    # Pull secrets from Secret Manager
+    project_id = os.environ.get("GOOGLE_PROJECT_ID")
+
+    client = secretmanager.SecretManagerServiceClient()
+    settings_name = os.environ.get("DJANGO_SETTINGS_MODULE")
+    name = f"projects/{project_id}/secrets/{settings_name}/versions/latest"
+    payload = client.access_secret_version(name=name).payload.data.decode("UTF-8")
+
+    load_dotenv(stream=io.StringIO(payload))
+else:
+    raise Exception("No local .env or GOOGLE_CLOUD_PROJECT detected. No secrets found.")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
