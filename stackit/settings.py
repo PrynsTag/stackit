@@ -14,6 +14,7 @@ from pathlib import Path
 
 import sentry_sdk
 from dotenv import load_dotenv
+from google.oauth2 import service_account
 from sentry_sdk.integrations.django import DjangoIntegration
 
 load_dotenv()
@@ -30,7 +31,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", os.getenv("APP_ENGINE_ALLOWED_HOST")]
+ALLOWED_HOSTS = ["127.0.0.1", os.getenv("APP_ENGINE_ALLOWED_HOST")]
 
 # Application definition
 
@@ -114,6 +115,10 @@ DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
 GS_BUCKET_NAME = os.getenv("GS_BUCKET_NAME")
 STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
 STATIC_URL = "https://storage.googleapis.com/stackit-2022/static/"
+
+GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
+    os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
