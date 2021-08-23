@@ -24,7 +24,11 @@ jobs:
             python manage.py migrate
       - run:
           name: Collect Static Files
-          command: ./manage.py collectstatic --no-input
+          command: |
+            echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -di >> ${CIRCLE_WORKING_DIRECTORY}/private_key.json
+            export $GOOGLE_APPLICATION_CREDENTIALS=${CIRCLE_WORKING_DIRECTORY}/private_key.json
+            ./manage.py collectstatic --no-input
+            rm -f ${CIRCLE_WORKING_DIRECTORY}/private_key.json
   test:
     docker:
       - image: cimg/python:3.9
