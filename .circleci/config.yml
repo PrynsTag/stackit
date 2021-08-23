@@ -27,6 +27,7 @@ jobs:
           command: |
             echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -di >> ${HOME}/private_key.json
             export $GOOGLE_APPLICATION_CREDENTIALS=${HOME}/private_key.json
+            echo $GOOGLE_APPLICATION_CREDENTIALS
             ./manage.py collectstatic --no-input
   test:
     docker:
