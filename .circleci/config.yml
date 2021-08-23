@@ -12,7 +12,6 @@ jobs:
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
-    parallelism: 4
     steps:
       - checkout
       - python/install-packages:
