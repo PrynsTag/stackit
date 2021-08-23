@@ -61,6 +61,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Collect Static Files
+          command: ./manage.py collectstatic
+      - run:
           name: Copy across app.yaml config
           command: ./app.yaml.sh > ./app.yaml
       - run:
