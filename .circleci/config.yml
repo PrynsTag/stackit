@@ -104,6 +104,8 @@ workflows:
             - docker
           post-steps:
             - jira/notify
+          requires:
+            - test
       - deploy-to-staging:
           context:
             - docker
