@@ -1,4 +1,3 @@
----
 version: 2.1
 
 orbs:
@@ -6,27 +5,6 @@ orbs:
   jira: circleci/jira@1.3.1
 
 jobs:
-  build:
-    docker:
-      - image: cimg/python:3.9
-        auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_PASSWORD
-    steps:
-      - checkout
-      - python/install-packages:
-          pkg-manager: pip
-      - run:
-          name: Run Django Migration
-          command: |
-            python manage.py makemigrations
-            python manage.py migrate
-      - run:
-          name: Collect Static Files
-          command: |
-            echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -di >> ${HOME}/private_key.json
-            export $GOOGLE_APPLICATION_CREDENTIALS=${HOME}/private_key.json
-            ./manage.py collectstatic --no-input
   test:
     docker:
       - image: cimg/python:3.9
@@ -57,6 +35,26 @@ jobs:
           path: test-results
           destination: tr1
 
+  build:
+    docker:
+      - image: cimg/python:3.9
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
+    parallelism: 4
+    steps:
+      - checkout
+      - python/install-packages:
+          pkg-manager: pip
+      - run:
+          name: Collect Static and Make Migration
+          command: |
+            base64 -di \<<< $CLOUD_STORAGE_KEY >> /home/circleci/project/key.json
+            export GOOGLE_APPLICATION_CREDENTIALS=/home/circleci/project/key.json
+            ./manage.py collectstatic --no-input
+            ./manage.py makemigrations
+            ./manage.py migrate
+
   deploy-to-staging:
     docker:
       - image: google/cloud-sdk
@@ -71,7 +69,7 @@ jobs:
       - run:
           name: Set up gcloud config
           command: |
-            echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -di | gcloud auth activate-service-account --key-file=-
+            echo $GCLOUD_AUTH_KEY | base64 -di | gcloud auth activate-service-account --key-file=-
             gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
             gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
       - run:
@@ -107,8 +105,8 @@ workflows:
           context:
             - docker
           requires:
-            - build
             - test
+            - build
           filters:
             branches:
               only:
