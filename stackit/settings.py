@@ -54,7 +54,7 @@ else:
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["127.0.0.1", os.getenv("APP_ENGINE_ALLOWED_HOST")]
 
@@ -62,13 +62,15 @@ ALLOWED_HOSTS = ["127.0.0.1", os.getenv("APP_ENGINE_ALLOWED_HOST")]
 
 INSTALLED_APPS = [
     "home",
-    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
-    "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
 ]
+PRODUCTION_ENABLED = DEBUG
+
+if PRODUCTION_ENABLED is True:
+    INSTALLED_APPS.append(["django.contrib.admin", "django.contrib.sessions"])
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
