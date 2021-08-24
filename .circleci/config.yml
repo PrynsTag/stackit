@@ -48,16 +48,13 @@ jobs:
       - python/install-packages:
           pkg-manager: pip
       - run:
-          name: Collect Static Files
+          name: Collect Static and Make Migration
           command: |
-            echo $CLOUD_STORAGE_KEY | base64 -di >> ${HOME}/private_key.json
-            export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/private_key.json
+            base64 -di \<<< $CLOUD_STORAGE_KEY >> /home/circleci/project/key.json
+            export GOOGLE_APPLICATION_CREDENTIALS=/home/circleci/project/key.json
             ./manage.py collectstatic --no-input
-      - run:
-          name: Run Django Migration
-          command: |
-            python manage.py makemigrations
-            python manage.py migrate
+            ./manage.py makemigrations
+            ./manage.py migrate
 
   deploy-to-staging:
     docker:

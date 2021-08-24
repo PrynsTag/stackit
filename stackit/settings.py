@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import ast
 import io
 import os
 from pathlib import Path
@@ -28,13 +29,17 @@ if os.path.isfile(env_file):
     # Use a local secret file, if provided
 
     load_dotenv(env_file)
+
+    GS_CREDENTIALS = service_account.Credentials.from_service_account_info(
+        ast.literal_eval(os.getenv("GOOGLE_STORAGE_CREDENTIALS"))
+    )
 # ...
 elif os.environ.get("GOOGLE_PROJECT_ID", None):
     # Pull secrets from Secret Manager
     project_id = os.environ.get("GOOGLE_PROJECT_ID")
 
     client = secretmanager.SecretManagerServiceClient()
-    settings_name = os.environ.get("DJANGO_SETTINGS_MODULE")
+    settings_name = os.environ.get("SETTINGS_NAME", "django_env")
     name = f"projects/{project_id}/secrets/{settings_name}/versions/latest"
     payload = client.access_secret_version(name=name).payload.data.decode("UTF-8")
 
@@ -129,16 +134,16 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "templates")]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "templates"),
+    os.path.join(BASE_DIR, "home/templates"),
+]
 DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
 GS_BUCKET_NAME = os.getenv("GS_BUCKET_NAME")
 STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
 STATIC_URL = "https://storage.googleapis.com/stackit-2022/static/"
-
-GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
-    os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
