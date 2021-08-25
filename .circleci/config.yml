@@ -50,6 +50,7 @@ jobs:
       - run:
           name: Collect Static
           command: |
+            mkdir -p ${CIRCLE_WORKING_DIRECTORY}/home/static
             ./manage.py collectstatic --no-input
       - run:
           name: Collect Static and Make Migration
