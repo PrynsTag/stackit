@@ -21,4 +21,4 @@ from stackit import settings
 urlpatterns = [path("", include("home.urls"))]
 
 if settings.PRODUCTION_ENABLED:
-    urlpatterns += path("", (r"^admin/(.*)", include(admin.site.urls)))
+    urlpatterns.append(path(r"admin/(.*)", admin.site.urls))
