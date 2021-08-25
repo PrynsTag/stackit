@@ -74,7 +74,8 @@ INSTALLED_APPS = [
 PRODUCTION_ENABLED = DEBUG
 
 if PRODUCTION_ENABLED is True:
-    INSTALLED_APPS.append(["django.contrib.admin", "django.contrib.sessions"])
+    INSTALLED_APPS.append("django.contrib.admin")
+    INSTALLED_APPS.append("django.contrib.sessions")
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
