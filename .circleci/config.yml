@@ -20,8 +20,6 @@ jobs:
       - run:
           name: Run Django Test
           command: |
-            base64 -di \<<< $CLOUD_STORAGE_KEY >> /home/circleci/project/key.json
-            export GOOGLE_APPLICATION_CREDENTIALS=/home/circleci/project/key.json
             coverage run ./manage.py test -v 2 --parallel
             coverage run ./manage.py check --deploy
       - run:
@@ -50,11 +48,12 @@ jobs:
       - python/install-packages:
           pkg-manager: pip
       - run:
+          name: Collect Static
+          command: |
+            ./manage.py collectstatic --no-input
+      - run:
           name: Collect Static and Make Migration
           command: |
-            base64 -di \<<< $CLOUD_STORAGE_KEY >> /home/circleci/project/key.json
-            export GOOGLE_APPLICATION_CREDENTIALS=/home/circleci/project/key.json
-            ./manage.py collectstatic --no-input
             ./manage.py makemigrations
             ./manage.py migrate
 
