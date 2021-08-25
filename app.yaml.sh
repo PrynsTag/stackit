@@ -5,7 +5,7 @@ env: standard
 instance_class: F1
 inbound_services:
   - warmup
-entrypoint: gunicorn -b 127.0.0.1:${PORT:-8080} -w 1 main:app
+entrypoint: gunicorn -b :${PORT} -w 1 main:app
 
 env_variables:
   APP_ENGINE_ALLOWED_HOST: \"$APP_ENGINE_ALLOWED_HOST\"
