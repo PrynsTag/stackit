@@ -28,3 +28,6 @@ LICENSE
 .coveragerc
 .github
 .circleci
+static
+templates
+app.yaml.sh
