@@ -15,5 +15,4 @@ def hello(request):
 
 def home(request):
     """This is Home"""
-    hi = "this is hi"
-    return render(request, "home/home.html", {"text": hi})
+    return render(request, "home/home.html")
